@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  roles:
+    - { role: zoom, tags: ["zoom"] }
+  gather_facts: no
+  vars:
+    zoom_schroot_user: zoom

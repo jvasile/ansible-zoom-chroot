@@ -17,6 +17,18 @@ This will launch zoom.  The xhost command tells your x session to
 allow foreign connections.  You can turn it off with `xhost -` after
 you're done with zoom.
 
+# Running
+
+Perhaps you already have a system with a bunch of ansible
+infrastructure.  In that case, you know what to do with an ansible
+role, and this repo is designed to be placed as roles/zoom wherever
+you normally put such things.
+
+On the other hand, perhaps you're not using ansible all that much. If
+that's the case, from this directory try this:
+
+    sudo ansible-playbook -b -i hosts playbook.yml
+
 # Warnings
 
  * This script was written to be run on localhost.  I haven't tested
