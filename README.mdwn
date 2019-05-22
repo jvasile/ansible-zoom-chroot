@@ -1,5 +1,7 @@
-# Zoom
+# Ansible Zoom
 
+Zoom video conferencing in a chroot so it doesn't muck your system up.
+ 
 Zoom is proprietary software whose Debian version runs on some old
 packages.  It needs isolation because (a) it's proprietary code that
 might well have security issues and (b) it seems to need old versions
