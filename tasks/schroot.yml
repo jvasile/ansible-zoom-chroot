@@ -25,13 +25,19 @@
   tags:
     - zoom_deb_install
 
-- name: Install zoom from deb
-  command: schroot -c {{ zoom_schroot_name | default('zoom')}} -- dpkg -i /tmp/zoom_amd64.deb 
+- name: Install zoom from deb (might take a while)
+  shell: schroot -c {{ zoom_schroot_name | default('zoom')}} -- dpkg -l zoom | grep -q "^ii" || schroot -c {{ zoom_schroot_name | default('zoom')}} -- dpkg -i /tmp/zoom_amd64.deb 
+  register: command_result
   ignore_errors: yes
   tags:
     - zoom_deb_install
 
-- name: Install missing dependences (takes a while)
+# - name: Ansible shell register result
+  # debug: msg="{{ command_result }}" 
+  # tags:
+    # - debug
+
+- name: Install missing dependences (might take a while)
   command: schroot -c {{ zoom_schroot_name | default('zoom')}} -- apt-get install --fix-broken --yes
   args:
     warn: false
