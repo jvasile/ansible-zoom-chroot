@@ -28,6 +28,11 @@ On the other hand, perhaps you're not using ansible all that much. If
 that's the case, from this directory try this:
 
     sudo ansible-playbook -b -i hosts playbook.yml
+    
+You can run just portions of the playbook using tags.  This would run
+the first half of the setup, and adjust repos, then stop:
+
+    sudo ansible-playbook -b -i hosts playbook.yml --tags zoom_localhost,zoom_repos
 
 # Warnings
 
