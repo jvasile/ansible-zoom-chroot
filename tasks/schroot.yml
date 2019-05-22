@@ -18,12 +18,20 @@
   tags:
     - zoom_chroot_deps
 
+- name: Check if /tmp/zoom_amd64.deb exists
+  stat: path="/tmp/zoom_amd64.deb"
+  register: zoom_st
+  tags:
+    - zoom_deb_install
+    - debug
 - name: Download zoom deb
   get_url:
     url: https://zoom.us/client/latest/zoom_amd64.deb
     dest: /tmp/zoom_amd64.deb
+  when: not zoom_st.stat.exists
   tags:
     - zoom_deb_install
+    - debug
 
 - name: Install zoom from deb (might take a while)
   shell: schroot -c {{ zoom_schroot_name | default('zoom')}} -- dpkg -l zoom | grep -q "^ii" || schroot -c {{ zoom_schroot_name | default('zoom')}} -- dpkg -i /tmp/zoom_amd64.deb 
