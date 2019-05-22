@@ -1,4 +1,4 @@
-# Ansible Zoom
+# Ansible Zoom In A Chroot
 
 Zoom video conferencing in a chroot so it doesn't muck your system up.
  
@@ -17,6 +17,25 @@ This will launch zoom.  The xhost command tells your x session to
 allow foreign connections.  You can turn it off with `xhost -` after
 you're done with zoom.
 
+# Warnings
+
+ * This script was written to be run on localhost.  I haven't tested
+   it on a remote box, and while I suppose it should be ok, I haven't
+   thought through any of the issues related to remote vs local
+   setups.
+
+ * So far, this works on my laptop.  It could use more real-world
+   testers.
+
+ * This depends on old Debian repos being available.  I don't actually
+   know how reliable that is.  My first Debian install was Bo.  You'd
+   think I'd know this by now.
+   
+ * This depends on the zoom .deb file being available at a stable url.
+   I don't know what will happen if the zoom folks update
+   zoom_amd64.deb.  For better or worse, I don't think they've done
+   that in a while.
+ 
 # Variables
 
 Ansible likes to do setup via variables, so here's some you can set.
