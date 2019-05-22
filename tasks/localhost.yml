@@ -1,0 +1,50 @@
+---
+# This creates the chroot.  schroot.yml sets up zoom in that chroot.
+
+# First we have to install the packages we need to make the chroot
+- name: Install schroot and debootstrap debian packages
+  package:
+    name: ["debootstrap", "schroot"]
+    state: latest
+
+- name: Install schroot configuration file for zoom chroot
+  template:
+    src: roles/zoom/templates/schroot.d.conf
+    dest: /etc/schroot/chroot.d/zoom.conf
+    owner: root
+    group: root
+    mode: '0644' 
+ 
+- name: Create chroot dir {{ zoom_chroot_dir | default('/opt/zoom') }} 
+  file:
+    path: "{{ zoom_chroot_dir | default('/opt/zoom') }}" 
+    state: directory
+
+- name: Install debian into {{ zoom_chroot_dir | default('/opt/zoom') }} chroot (takes a while to complete)
+  shell: debootstrap --arch amd64 buster {{ zoom_chroot_dir | default('/opt/zoom') }} http://deb.debian.org/debian
+  args:
+    creates: "{{ zoom_chroot_dir | default('/opt/zoom') }}/etc"
+  when: zoom_chroot_clone is not defined
+  tags:
+    zoom_make_chroot
+    
+- name: Check if "{{ zoom_chroot_dir | default('/opt/zoom') }}/etc" exists
+  stat: path="{{ zoom_chroot_dir | default('/opt/zoom') }}/etc"
+  register: zoom_st
+  tags:
+    zoom_make_chroot
+
+- name: Clone chroot into {{ zoom_chroot_dir | default('/opt/zoom') }} chroot 
+  synchronize:
+    src: "{{ zoom_chroot_clone }}/"
+    dest: "{{ zoom_chroot_dir | default('/opt/zoom') }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: not zoom_st.stat.exists and zoom_chroot_clone is defined
+  tags:
+    zoom_make_chroot
+
+- name: Add user {{ zoom_schroot_user | default(lookup('env', 'SUDO_USER')) }}
+  user:
+    name: "{{ zoom_schroot_user | default(lookup('env', 'SUDO_USER')) }}"
+    shell: /bin/bash
+

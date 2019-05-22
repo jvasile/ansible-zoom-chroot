@@ -1,0 +1,47 @@
+---
+# This sets up zoom inside the existing chroot
+
+- name: Enable jessie security to get libgstreamer-plugin-base10-0 
+  copy:
+    dest: "{{ zoom_chroot_dir | default('/opt/zoom') }}/etc/apt/sources.list.d/security.list"
+    content: deb http://security.debian.org/debian-security jessie/updates main
+  tags:
+    zoom_repos
+
+- name: Apt-get update
+  command: schroot -c {{ zoom_schroot_name | default('zoom')}} apt-get update
+  tags:
+    zoom_repos
+
+- name: Install deps into chroot
+  command: schroot -c {{ zoom_schroot_name | default('zoom')}} -- apt-get install --yes libasound2 libnss3 
+  tags:
+    - zoom_chroot_deps
+
+- name: Download zoom deb
+  get_url:
+    url: https://zoom.us/client/latest/zoom_amd64.deb
+    dest: /tmp/zoom_amd64.deb
+  tags:
+    - zoom_deb_install
+
+- name: Install zoom from deb
+  command: schroot -c {{ zoom_schroot_name | default('zoom')}} -- dpkg -i /tmp/zoom_amd64.deb 
+  ignore_errors: yes
+  tags:
+    - zoom_deb_install
+
+- name: Install missing dependences (takes a while)
+  command: schroot -c {{ zoom_schroot_name | default('zoom')}} -- apt-get install --fix-broken --yes
+  args:
+    warn: false
+  register: command_result
+  tags:
+    - zoom_deb_install
+    - zoom_fix_broken
+    - zoom_chroot_deps
+
+# - name: Ansible shell register result
+  # debug: msg="{{ command_result }}" 
+  # tags:
+    # - debug

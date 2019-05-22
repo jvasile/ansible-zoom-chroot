@@ -1,0 +1,53 @@
+# Zoom
+
+Zoom is proprietary software whose Debian version runs on some old
+packages.  It needs isolation because (a) it's proprietary code that
+might well have security issues and (b) it seems to need old versions
+of software.  This ansible role addresses both of these concerns by
+running zoom in a chroot.
+
+This ansible role installs zoom to a schroot so you can do
+
+    xhost +
+    schroot -c ZOOM_SCHROOT_NAME zoom
+    
+This will launch zoom.  The xhost command tells your x session to
+allow foreign connections.  You can turn it off with `xhost -` after
+you're done with zoom.
+
+# Variables
+
+Ansible likes to do setup via variables, so here's some you can set.
+
+zoom_chroot_dir = full path to the zoom chroot that we'll create,
+                  defaults to /opt/zoom
+
+zoom_chroot_clone = path to an existing debian buster chroot we can
+                    clone, defaults to using debootstrap to build one.
+
+zoom_schroot_user = name of localhost user who will access chroot,
+                    defaults to user running 'sudo
+                    ansible-playbook'. If you are just running as the
+                    root user, please set this variable.
+
+zoom_schroot_name = name of the chroot, used by schroot. Defaults to
+                   zoom
+
+# Security and Privacy
+
+This gives you some filesystem separation from zoom, but it exposes
+your home dir unless you make a new user.  Set zoom_schroot_user to
+somebody who isn't you (e.g. a special-purpose user named 'zoom') then
+switch to that user to run zoom. If zoom_schroot_user is a user who
+does not exist, ansible will create that user, but not set a password.
+You can use sudo or su to become that user:
+
+    xhost +
+    sudo -s -u zoom
+    cd ~ # must run from a dir that user zoom can access
+    schroot -c ZOOM_SCHROOT_NAME zoom
+
+# License
+
+This ansible role is copyright 2019 James Vasile and published under
+the terms of the GNU Affero General Public License, version 3 or later.
