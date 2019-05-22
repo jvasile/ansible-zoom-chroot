@@ -21,15 +21,15 @@ you're done with zoom.
 
 Ansible likes to do setup via variables, so here's some you can set.
 
-zoom_chroot_dir = full path to the zoom chroot that we'll create,
-                  defaults to /opt/zoom
+zoom_chroot_dir = full path to the zoom chroot that we'll create.
+		  Defaults to /opt/zoom
 
 zoom_chroot_clone = path to an existing debian buster chroot we can
-                    clone, defaults to using debootstrap to build one.
+                    clone. Defaults to using debootstrap to build one.
 
-zoom_schroot_user = name of localhost user who will access chroot,
-                    defaults to user running 'sudo
-                    ansible-playbook'. If you are just running as the
+zoom_schroot_user = name of localhost user who will access chroot.
+		    Defaults to user running 'sudo
+		    ansible-playbook'. If you are just running as the
                     root user, please set this variable.
 
 zoom_schroot_name = name of the chroot, used by schroot. Defaults to
