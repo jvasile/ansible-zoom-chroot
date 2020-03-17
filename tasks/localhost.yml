@@ -1,10 +1,10 @@
 ---
-# This creates the chroot.  schroot.yml sets up zoom in that chroot.
+# This creates the chroot and the launcher.  schroot.yml sets up zoom
+# in that chroot.
 
-# First we have to install the packages we need to make the chroot
-- name: Install schroot and debootstrap debian packages
+- name: Install zoom schroot's necessary debian packages
   package:
-    name: ["debootstrap", "schroot"]
+    name: ["debootstrap", "schroot", "stow"]
     state: latest
   tags:
     - zoom_deps
@@ -61,3 +61,31 @@
     shell: /bin/bash
   tags:
     - zoom_add_user
+
+- name: Make stow dir for zoom
+  shell: mkdir -p /usr/local/stow/zoom/bin
+  args:
+    warn: False
+  tags: zoom_install_launcher
+  
+- name: Stow should ignore local files
+  copy:
+    src: roles/zoom/files/stow-local-ignore
+    dest: /usr/local/stow/zoom/.stow-local-ignore
+    owner: root
+    group: root
+    mode: 0644
+  tags: zoom_install_launcher
+  
+- name: Install zoom launch script
+  template:
+    src: roles/zoom/templates/zoom
+    dest: /usr/local/stow/zoom/bin/zoom
+    owner: root
+    group: root
+    mode: '0755' 
+  tags: zoom_install_launcher
+
+- name: Stow zoom
+  shell: stow -d /usr/local/stow -R zoom
+  tags: zoom_install_launcher
