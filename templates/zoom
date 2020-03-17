@@ -1,0 +1,3 @@
+xhost +
+sudo -s su zoom -c "schroot -c {{ zoom_schroot_name | default('zoom')}} zoom"
+
