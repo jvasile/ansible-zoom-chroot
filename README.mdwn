@@ -8,14 +8,13 @@ might well have security issues and (b) it seems to need old versions
 of software.  This ansible role addresses both of these concerns by
 running zoom in a chroot.
 
-This ansible role installs zoom to a schroot so you can do
+This ansible role installs zoom to a schroot and puts a script in
+/usr/local/bin/zoom so you can just type `zoom` and you're good to go.
 
-    xhost +
-    schroot -c ZOOM_SCHROOT_NAME zoom
+TODO: add zoom to system menu, enable xdg-open
     
-This will launch zoom.  The xhost command tells your x session to
-allow foreign connections.  You can turn it off with `xhost -` after
-you're done with zoom.
+Note that the script sets your x session to allow foreign connections.
+You can turn it off with `xhost -` after you're done with zoom.
 
 # Running
 
@@ -88,5 +87,6 @@ You can use sudo or su to become that user:
 
 # License
 
-This ansible role is copyright 2019 James Vasile and published under
-the terms of the GNU Affero General Public License, version 3 or later.
+This ansible role is copyright 2019-2020 James Vasile and published
+under the terms of the GNU Affero General Public License, version 3 or
+later.
