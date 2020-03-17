@@ -18,7 +18,28 @@
     mode: '0644' 
   tags:
     - zoom_schroot_setup
- 
+
+- name: Make schroot profile dir
+  file:
+    path: "/etc/schroot/zoom"
+    state: directory
+  tags:
+    - zoom_schroot_setup
+    
+- name: Put schroot profile in place
+  copy:
+    src: roles/zoom/files/schroot_profile/{{ item }}
+    dest: /etc/schroot/zoom/{{ item }}
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - copyfiles
+    - fstab
+    - nssdatabases
+  tags:
+    - zoom_schroot_setup
+    
 - name: Create chroot dir {{ zoom_chroot_dir | default('/opt/zoom') }} 
   file:
     path: "{{ zoom_chroot_dir | default('/opt/zoom') }}" 
@@ -27,7 +48,7 @@
     - zoom_schroot_setup
 
 - name: Install debian into {{ zoom_chroot_dir | default('/opt/zoom') }} chroot (takes a while to complete)
-  shell: debootstrap --arch amd64 buster {{ zoom_chroot_dir | default('/opt/zoom') }} http://deb.debian.org/debian
+  shell: debootstrap --arch amd64 bullseye {{ zoom_chroot_dir | default('/opt/zoom') }} http://deb.debian.org/debian
   args:
     creates: "{{ zoom_chroot_dir | default('/opt/zoom') }}/etc"
   when: zoom_chroot_clone is not defined
@@ -55,10 +76,15 @@
   tags:
     - zoom_make_chroot
 
-- name: Add user {{ zoom_schroot_user | default(lookup('env', 'SUDO_USER')) }}
+- name: Add user {{ zoom_schroot_user | default('zoom') }}
   user:
-    name: "{{ zoom_schroot_user | default(lookup('env', 'SUDO_USER')) }}"
+    name: "{{ zoom_schroot_user | default('zoom')}}"
     shell: /bin/bash
+    group: "{{ zoom_schroot_user | default('zoom')}}"
+    groups:
+      - audio
+      - video
+    append: yes
   tags:
     - zoom_add_user
 
