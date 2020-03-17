@@ -42,7 +42,9 @@
   # debug: msg="{{ command_result }}" 
   # tags:
     # - debug
-
+- debug:
+    msg: The above should give errors on missing dependencies. Hopefully the next task fixes them.
+    
 - name: Install missing dependences (might take a while)
   command: schroot -c {{ zoom_schroot_name | default('zoom')}} -- apt-get install --fix-broken --yes
   args:
@@ -53,7 +55,5 @@
     - zoom_fix_broken
     - zoom_chroot_deps
 
-# - name: Ansible shell register result
-  # debug: msg="{{ command_result }}" 
-  # tags:
-    # - debug
+- debug:
+    msg: Run zoom with `zoom`
